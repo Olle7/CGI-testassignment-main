@@ -9,13 +9,15 @@ import { BooksListComponent } from './components/books-list/books-list.component
 import { BookDetailComponent } from './components/book-detail/book-detail.component';
 import { HttpClientModule } from '@angular/common/http';
 import {TableOfBooksComponent} from "./components/table-of-books/table-of-books.component";
+import {TableOfCheckoutsComponent} from "./components/table-of-checkouts/table-of-checkouts.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     BooksListComponent,
     BookDetailComponent,
-    TableOfBooksComponent
+    TableOfBooksComponent,
+    TableOfCheckoutsComponent
   ],
   imports: [
     BrowserModule,
