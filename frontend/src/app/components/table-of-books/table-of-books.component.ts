@@ -12,6 +12,8 @@ import { Book } from '../../models/book';
 export class TableOfBooksComponent implements OnInit {
 
   books$: Observable<Page<Book> | Error>;
+  TH$:Array<String>;
+  olg$: String ;
 
   constructor(
     private bookService: BookService,
@@ -21,7 +23,8 @@ export class TableOfBooksComponent implements OnInit {
   ngOnInit(): void {
     // TODO this observable should emit books taking into consideration pagination, sorting and filtering options.
     this.books$ = this.bookService.getBooks({});
-
+    this.olg$="tüüp:"+this.books$;
+    this.TH$ = ["author","title","year","status","dueDate","id","added","checkOutCount","genre","comment"];
   }
 
 }
