@@ -72,3 +72,6 @@ Reader should not be able to add / modify / delete existing book information or 
 but should be able to save favorites and check out / return books (that they have checked out)
 * Containerize your application to make it cloud-native
 
+
+
+### ESIMENE COMMIT PEALE FRAMEWORKITA HARU TEGEMIST.
