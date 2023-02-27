@@ -1,7 +1,9 @@
 package com.cgi.library.controller;
 
+import com.cgi.library.entity.Book;
 import com.cgi.library.model.BookDTO;
 import com.cgi.library.service.BookService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +20,7 @@ public class BookController {
     private BookService bookService;
 
     @GetMapping(value = "getBooks")
-    public ResponseEntity<String> getBooks(Pageable pageable) {
+    public ResponseEntity<Page<BookDTO>> getBooks() throws JsonProcessingException {
         return ResponseEntity.ok(bookService.getBooks());
     }
 
