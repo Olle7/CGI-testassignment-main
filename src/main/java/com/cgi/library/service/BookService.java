@@ -25,23 +25,10 @@ public class BookService {
     @Autowired
     private BookRepository bookRepository;
 
-    public Page<BookDTO> getBooks() throws JsonProcessingException {
-        ModelMapper modelMapper = ModelMapperFactory.getMapper();
+    public String getBooks() throws JsonProcessingException {
         List<Book> books = bookRepository.findAll();
-
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        System.out.println("book0:"+books.get(0));
-        String json="000";
-        try {
-            json = ow.writeValueAsString(books.get(0));
-        }
-        catch (JsonProcessingException e){
-            System.out.println("ERROR:"+e.toString());
-        }
-
-        System.out.println("books list:"+books.toString());
-        System.out.println("books json:"+json);
-        return null;
+        String json = new ObjectMapper().writer().withDefaultPrettyPrinter().writeValueAsString(books);
+        return json;
     }
 
     public BookDTO getBook(UUID bookId) {

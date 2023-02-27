@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +20,10 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    @GetMapping(value = "getBooks")
-    public ResponseEntity<Page<BookDTO>> getBooks() throws JsonProcessingException {
-        return ResponseEntity.ok(bookService.getBooks());
+    @ResponseBody
+    @RequestMapping(value = "getBooks", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getBooks() throws JsonProcessingException {
+        return bookService.getBooks();
     }
 
     @GetMapping(value = "getBook")

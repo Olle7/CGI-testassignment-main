@@ -49,8 +49,8 @@ public class Book {
     @Column
     private String comment;
 
-    @OneToMany(mappedBy = "borrowedBook")
-    private List<CheckOut> checkOuts = new ArrayList<>();
+    //@OneToMany(mappedBy = "borrowedBook")
+    //private List<CheckOut> checkOuts = new ArrayList<>();
 
     public UUID getId() {
         return id;
@@ -132,11 +132,11 @@ public class Book {
         this.comment = comment;
     }
 
-    public List<CheckOut> getCheckOuts() {
-        return checkOuts;
-    }
+    //public List<CheckOut> getCheckOuts() {
+    //    return checkOuts;
+    //}
 
-    public void setCheckOuts(List<CheckOut> checkOuts) {
-        this.checkOuts = checkOuts;
-    }
+    //public void setCheckOuts(List<CheckOut> checkOuts) {
+    //    this.checkOuts = checkOuts;
+    //}
 }
