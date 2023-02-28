@@ -12,7 +12,13 @@
         <th>Author</th>
         <th>Title</th>
         <th>Publication Date</th>
-        <th>year</th>
+        <th>Status</th>
+        <th>Due Date</th>
+        <th>ID</th>
+        <th>Added</th>
+        <th>Check Out Count</th>
+        <th>Genre</th>
+        <th>Comment</th>
     </tr>
     </thead>
     <tbody>
@@ -29,25 +35,48 @@
         .then(data => {
             list_of_books=data;
             // Get a reference to the table body element
-            const tableBody = document.querySelector('#booksTable tbody');
+            fill_table()
 
-
-
-            // Loop through the JSON data and create table rows
-            data.forEach(book => {
-                const row = tableBody.insertRow();
-                const titleCell = row.insertCell();
-                const authorCell = row.insertCell();
-                const pubDateCell = row.insertCell();
-
-                titleCell.innerText = book.title;
-                authorCell.innerText = book.author;
-                pubDateCell.innerText = book.publicationDate;
-            });
         })
         .catch(error => console.error(error));
 
-    console.log("data:",list_of_books);
+
+    function fill_table(){
+        const tableBody = document.querySelector('#booksTable tbody');
+
+        // Loop through the JSON data and create table rows
+        list_of_books.forEach(book => {
+            const row = tableBody.insertRow();
+
+            const authorCell = row.insertCell();
+            const titleCell = row.insertCell();
+            const pubDateCell = row.insertCell();
+            const statusCell = row.insertCell();
+            const dueDateCell = row.insertCell();
+            const idCell = row.insertCell();
+            const addedCell = row.insertCell();
+            const checkOutCountCell = row.insertCell();
+            const genreCell = row.insertCell();
+            const commentCell = row.insertCell();
+
+            authorCell.innerText = book.author;
+            titleCell.innerText = book.title;
+            pubDateCell.innerText = book.year;
+            statusCell.innerText = book.status;
+            idCell.innerText = book.id;
+            addedCell.innerText = book.added.dayOfMonth + "/" + book.added.monthValue + "/" + book.added.year;
+            checkOutCountCell.innerText = book.checkOutCount;
+            genreCell.innerText = book.genre;
+            commentCell.innerText = book.comment;
+
+            // Check if the dueDate is null
+            if (book.dueDate == null) {
+                dueDateCell.innerText = "N/A";
+            } else {
+                dueDateCell.innerText = book.dueDate.dayOfMonth + "/" + book.dueDate.monthValue + "/" + book.dueDate.year;
+            }
+        });
+    }
 </script>
 
 </body>

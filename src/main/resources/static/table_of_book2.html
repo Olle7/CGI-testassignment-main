@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Table of books</title>
+</head>
+<body>
+<h1>Table of books</h1>
+<table id="booksTable">
+  <thead>
+  <tr>
+    <th>Author</th>
+    <th>Title</th>
+    <th>Publication Date</th>
+    <th>Status</th>
+    <th>Due Date</th>
+    <th>ID</th>
+    <th>Added</th>
+    <th>Check Out Count</th>
+    <th>Genre</th>
+    <th>Comment</th>
+  </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+<script>
+  // Define the URL to fetch JSON data from
+  const url = "http://localhost:8080/api/book/getBooks";
+
+  // Use the fetch function to download the JSON data
+  fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            list_of_books=data;
+            // Get a reference to the table body element
+            fill_table()
+
+          })
+          .catch(error => console.error(error));
+
+
+  function fill_table(){
+    const tableBody = document.querySelector('#booksTable tbody');
+
+    // Loop through the JSON data and create table rows
+    list_of_books.forEach(book => {
+      const row = tableBody.insertRow();
+
+      const authorCell = row.insertCell();
+      const titleCell = row.insertCell();
+      const pubDateCell = row.insertCell();
+      const statusCell = row.insertCell();
+      const dueDateCell = row.insertCell();
+      const idCell = row.insertCell();
+      const addedCell = row.insertCell();
+      const checkOutCountCell = row.insertCell();
+      const genreCell = row.insertCell();
+      const commentCell = row.insertCell();
+
+      authorCell.innerText = book.author;
+      titleCell.innerText = book.title;
+      pubDateCell.innerText = book.year;
+      statusCell.innerText = book.status;
+      dueDateCell.innerText = book.dueDate.dayOfMonth + "/" + book.dueDate.monthValue + "/" + book.dueDate.year;
+      idCell.innerText = book.id;
+      addedCell.innerText = book.added.dayOfMonth + "/" + book.added.monthValue + "/" + book.added.year;
+      checkOutCountCell.innerText = book.checkOutCount;
+      genreCell.innerText = book.genre;
+      commentCell.innerText = book.comment;
+    });
+  }
+</script>
+
+</body>
+</html>
