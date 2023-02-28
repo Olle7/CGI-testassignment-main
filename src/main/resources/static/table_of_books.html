@@ -5,9 +5,50 @@
     <title>Table of books</title>
 </head>
 <body>
-
-<table>
+<h1>Table of books</h1>
+<table id="booksTable">
+    <thead>
+    <tr>
+        <th>Author</th>
+        <th>Title</th>
+        <th>Publication Date</th>
+        <th>year</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
 </table>
+
+<script>
+    // Define the URL to fetch JSON data from
+    const url = "http://localhost:8080/api/book/getBooks";
+
+    // Use the fetch function to download the JSON data
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            list_of_books=data;
+            // Get a reference to the table body element
+            const tableBody = document.querySelector('#booksTable tbody');
+
+
+
+            // Loop through the JSON data and create table rows
+            data.forEach(book => {
+                const row = tableBody.insertRow();
+                const titleCell = row.insertCell();
+                const authorCell = row.insertCell();
+                const pubDateCell = row.insertCell();
+
+                titleCell.innerText = book.title;
+                authorCell.innerText = book.author;
+                pubDateCell.innerText = book.publicationDate;
+            });
+        })
+        .catch(error => console.error(error));
+
+    console.log("data:",list_of_books);
+</script>
 
 </body>
 </html>
