@@ -3,22 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>Table of books</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+    </style>
 </head>
 <body>
 <h1>Table of books</h1>
+<div>
+    <label for="paginationCheckbox">Show pagination:</label>
+    <input type="checkbox" id="paginationCheckbox" onchange="fill_table()" />
+</div>
 <table id="booksTable">
     <thead>
     <tr>
-        <th>Author</th>
-        <th>Title</th>
-        <th>Publication Date</th>
-        <th>Status</th>
-        <th>Due Date</th>
-        <th>ID</th>
-        <th>Added</th>
-        <th>Check Out Count</th>
-        <th>Genre</th>
-        <th>Comment</th>
+        <th onclick="sort('author')">author</th>
+        <th onclick="sort('title')">title</th>
+        <th onclick="sort('year')">time of publication</th>
+        <th onclick="sort('status')">status</th>
+        <th onclick="sort('dueDate')">due date</th>
+        <th onclick="sort('id')">ID</th>
+        <th onclick="sort('added')">added</th>
+        <th onclick="sort('checkOutCount')">check Out Count</th>
+        <th onclick="sort('genre')">genre</th>
+        <th onclick="sort('comment')">comment</th>
     </tr>
     </thead>
     <tbody>
@@ -43,6 +53,11 @@
 
     function fill_table(){
         const tableBody = document.querySelector('#booksTable tbody');
+
+        for(var i=0;i<tableBody.rows.length;){
+            tableBody.deleteRow(i);
+        }
+
 
         // Loop through the JSON data and create table rows
         list_of_books.forEach(book => {
@@ -77,6 +92,63 @@
             }
         });
     }
+    sorting_order=["author","title","year","status","dueDate","id","added","checkOutCount","genre",];
+    sort_order = { author: 1, title: 1, year: 1, status: 1, dueDate: 1, id: 1, added: 1, checkOutCount: 1, genre: 1 };
+
+    function sort(column) {
+        // Check the current sorting order for this column
+        const order = sort_order[column];
+
+        // Remove the column from the sorting order, if it's already there
+        sorting_order = sorting_order. nfilter(item => item !== column);
+
+        // Add the column to the end of the sorting order
+        sorting_order.push(column);
+
+
+        // Update the sorting order for this column
+        sort_order[column] = (sorting_order[sorting_order.length-1] === column) ? -1 * sort_order[column] : 1;
+        console.log(sorting_order[sorting_order.length-1],column)
+        console.log(sorting_order);
+        console.log(sort_order);
+
+        // Sort the list of books using the sorting order
+        list_of_books.sort((a, b) => {
+            for (let i = sorting_order.length - 1; i >= 0; i--) {
+                const key = sorting_order[i];
+                const order = sort_order[sorting_order[i]];
+
+                // Handle sorting by "added" or "dueDate" columns
+                let aValue = a[key];
+                let bValue = b[key];
+                if (key === "added" || key === "dueDate") {
+                    if (aValue === null) {
+                        aValue = 0;
+                    } else {
+                        aValue = new Date(a[key].year, a[key].monthValue - 1, a[key].dayOfMonth);
+                    }
+                    if (bValue === null) {
+                        bValue = 0;
+                    } else {
+                        bValue = new Date(b[key].year, b[key].monthValue - 1, b[key].dayOfMonth);
+                    }
+                }
+
+                const diff = aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+
+                if (diff !== 0) {
+                    // Sort in the current order if it's ascending (1), and in the opposite order if it's descending (-1)
+                    return order === 1 ? diff : -diff;
+                }
+            }
+            return 0;
+        });
+
+        // Update the table with the sorted data
+        fill_table();
+    }
+
+
 </script>
 
 </body>
