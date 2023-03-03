@@ -9,13 +9,62 @@
             border-collapse: collapse;
         }
     </style>
+
+    <style>
+        .context-menu {
+            position: absolute;
+            z-index: 1000;
+            width: 120px;
+            background-color: #fff;
+            border: 1px solid #888;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+            padding: 4px 0;
+            list-style: none;
+        }
+
+        .context-menu li {
+            padding: 4px 12px;
+            cursor: pointer;
+        }
+
+        .context-menu li:hover {
+            background-color: #ddd;
+        }
+
+        .context-menu li.disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+    </style>
+
+
 </head>
 <body>
 <h1>Table of books</h1>
 <div>
-    <label for="paginationCheckbox">Show pagination:</label>
-    <input type="checkbox" id="paginationCheckbox" onchange="fill_table()" />
+    <label for="paginationCheckbox">Paginate the table:</label>
+    <input type="checkbox" id="paginationCheckbox" onchange="display_table()" />
+    &nbsp;
+    <label for="pageInput">Page number:</label>
+    <input type="number" id="pageInput" value="0" min="0" onchange="display_table()" />
+    &nbsp;
+    <label for="booksPerPageInput">Books per page:</label>
+    <input type="number" id="booksPerPageInput" value="20" min="1" onchange="display_table()" />
 </div>
+
+<div>
+    <label for="borrowedCheckbox">Show borrowed books:</label>
+    <input type="checkbox" id="borrowedCheckbox" onchange="display_table()" checked>
+    <label for="availableCheckbox">Show available books:</label>
+    <input type="checkbox" id="availableCheckbox" onchange="display_table()" checked>
+</div>
+
+<div>
+    <label for="searchInput">Search:</label>
+    <input type="text" id="searchInput" oninput="display_table()" />
+</div>
+
+
 <table id="booksTable">
     <thead>
     <tr>
@@ -45,22 +94,64 @@
         .then(data => {
             list_of_books=data;
             // Get a reference to the table body element
-            fill_table()
+            display_table()
 
         })
         .catch(error => console.error(error));
 
+    function display_table(){
+        if(document.getElementById("paginationCheckbox").checked){
+            page_nr=parseInt(document.getElementById("pageInput").value);
+            books_on_page=parseInt(document.getElementById("booksPerPageInput").value);
+            fill_table(books_on_page*page_nr,books_on_page*(page_nr+1));
+        }
+        else{
+            fill_table(0,Infinity);}
+    }
 
-    function fill_table(){
-        const tableBody = document.querySelector('#booksTable tbody');
+    function freeCriteriaFilter(book,searchQuery){
+        console.log(searchQuery);
+        let matchesSearchQuery = false;
+        if (searchQuery !== '') {
+            const fieldsToSearch = ['author', 'title', 'year', 'status', 'dueDate', 'id', 'added', 'checkOutCount', 'genre', 'comment'];
+            for (let j = 0; j < fieldsToSearch.length; j++) {
+                const fieldValue = book[fieldsToSearch[j]];
+                if (typeof fieldValue === 'string' && fieldValue.toLowerCase().includes(searchQuery)) {
+                    matchesSearchQuery = true;
+                    break;
+                }
+            }
+        } else {
+            matchesSearchQuery = true;
+        }
+        return matchesSearchQuery;
+    }
+    const tableBody = document.querySelector('#booksTable tbody');
+    function fill_table(first_book,last_book){
 
         for(var i=0;i<tableBody.rows.length;){
-            tableBody.deleteRow(i);
-        }
+            tableBody.deleteRow(i);}
 
+        let showBorrowed = document.querySelector('#borrowedCheckbox').checked;
+        let showAvailable = document.querySelector('#availableCheckbox').checked;
+
+        max_i= last_book<list_of_books.length ? last_book:list_of_books.length;
 
         // Loop through the JSON data and create table rows
-        list_of_books.forEach(book => {
+        for (let i = first_book; i <max_i; i++) {
+            book=list_of_books[i]
+            if (!showAvailable&&book.status==="AVAILABLE"){
+                continue}
+            if (!showBorrowed&&book.status==="BORROWED"){
+                continue}
+
+            searchedString=document.getElementById("searchInput").value;
+            if (!freeCriteriaFilter(book,searchedString)){
+                continue
+            }
+
+
+
             const row = tableBody.insertRow();
 
             const authorCell = row.insertCell();
@@ -90,7 +181,7 @@
             } else {
                 dueDateCell.innerText = book.dueDate.dayOfMonth + "/" + book.dueDate.monthValue + "/" + book.dueDate.year;
             }
-        });
+        };
     }
     sorting_order=["author","title","year","status","dueDate","id","added","checkOutCount","genre",];
     sort_order = { author: 1, title: 1, year: 1, status: 1, dueDate: 1, id: 1, added: 1, checkOutCount: 1, genre: 1 };
@@ -100,7 +191,7 @@
         const order = sort_order[column];
 
         // Remove the column from the sorting order, if it's already there
-        sorting_order = sorting_order. nfilter(item => item !== column);
+        sorting_order = sorting_order. filter(item => item !== column);
 
         // Add the column to the end of the sorting order
         sorting_order.push(column);
@@ -145,8 +236,45 @@
         });
 
         // Update the table with the sorted data
-        fill_table();
+        display_table();
     }
+tableBody.addEventListener('click', (event) => {
+    //event.preventDefault(); // Prevent the default context menu from appearing
+    const row = event.target.parentElement; // Get the parent element (the row) of the clicked cell
+    showContextMenu(event.clientX, event.clientY, row); // Call the showContextMenu function with the row as an argument
+});
+
+function showContextMenu(x, y, row) {
+    const menu = document.createElement('div'); // Create a new div element for the context menu
+    //menu.classList.add('context-menu'); // Add a CSS class to style the menu
+
+    // Add menu items to the context menu
+    const item1 = document.createElement('div');
+    item1.innerText = 'Edit';
+    item1.addEventListener('click', () => { editBook(row); }); // Call the editBook function when the item is clicked
+    menu.appendChild(item1);
+
+    const item2 = document.createElement('div');
+    item2.innerText = 'Delete';
+    item2.addEventListener('click', () => { deleteBook(row); }); // Call the deleteBook function when the item is clicked
+    menu.appendChild(item2);
+
+    // Set the position of the context menu
+    menu.style.left = x + 'px';
+    menu.style.top = y + 'px';
+
+
+    // Add the context menu to the page
+    document.body.appendChild(menu);
+
+    // Add a click event listener to the document to close the context menu when the user clicks outside of it
+    document.addEventListener('click', (event) => {
+        if (!menu.contains(event.target)) {
+            menu.remove();
+        }
+    });
+    alert(x+" ; "+y+" ; "+row);
+}
 
 
 </script>
