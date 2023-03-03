@@ -150,8 +150,6 @@
                 continue
             }
 
-
-
             const row = tableBody.insertRow();
 
             const authorCell = row.insertCell();
@@ -164,6 +162,12 @@
             const checkOutCountCell = row.insertCell();
             const genreCell = row.insertCell();
             const commentCell = row.insertCell();
+
+            const editDeleteCell = row.insertCell();
+            editDeleteCell.innerHTML = `<button onclick="delete_book(${book.id})">Delete</button>`;
+
+            const CheckoutCell = row.insertCell();
+            CheckoutCell.innerHTML = `<button onclick="checkout_book(${book.id})">checkout</button>`;
 
             authorCell.innerText = book.author;
             titleCell.innerText = book.title;
@@ -238,43 +242,6 @@
         // Update the table with the sorted data
         display_table();
     }
-tableBody.addEventListener('click', (event) => {
-    //event.preventDefault(); // Prevent the default context menu from appearing
-    const row = event.target.parentElement; // Get the parent element (the row) of the clicked cell
-    showContextMenu(event.clientX, event.clientY, row); // Call the showContextMenu function with the row as an argument
-});
-
-function showContextMenu(x, y, row) {
-    const menu = document.createElement('div'); // Create a new div element for the context menu
-    //menu.classList.add('context-menu'); // Add a CSS class to style the menu
-
-    // Add menu items to the context menu
-    const item1 = document.createElement('div');
-    item1.innerText = 'Edit';
-    item1.addEventListener('click', () => { editBook(row); }); // Call the editBook function when the item is clicked
-    menu.appendChild(item1);
-
-    const item2 = document.createElement('div');
-    item2.innerText = 'Delete';
-    item2.addEventListener('click', () => { deleteBook(row); }); // Call the deleteBook function when the item is clicked
-    menu.appendChild(item2);
-
-    // Set the position of the context menu
-    menu.style.left = x + 'px';
-    menu.style.top = y + 'px';
-
-
-    // Add the context menu to the page
-    document.body.appendChild(menu);
-
-    // Add a click event listener to the document to close the context menu when the user clicks outside of it
-    document.addEventListener('click', (event) => {
-        if (!menu.contains(event.target)) {
-            menu.remove();
-        }
-    });
-    alert(x+" ; "+y+" ; "+row);
-}
 
 
 </script>
