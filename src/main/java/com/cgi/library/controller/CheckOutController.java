@@ -2,6 +2,7 @@ package com.cgi.library.controller;
 
 import com.cgi.library.model.CheckOutDTO;
 import com.cgi.library.service.CheckOutService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +20,8 @@ public class CheckOutController {
     private CheckOutService checkOutService;
 
     @GetMapping(value = "getCheckouts")
-    public ResponseEntity<Page<CheckOutDTO>> getCheckOuts() {
-        //return ResponseEntity.ok("proov");
-        return ResponseEntity.ok(checkOutService.getCheckOuts(Pageable.unpaged()));
+    public String getCheckOuts() throws JsonProcessingException {
+        return checkOutService.getCheckOuts();
     }
 
     @GetMapping(value = "getCheckout")

@@ -14,7 +14,7 @@ public class FrontendController {
         return "main_page.html";
     }
 
-    @GetMapping("table_of_books")
+    @GetMapping("/table_of_books")
     public String TableOfBooks() {
         return "table_of_books.html";
     }

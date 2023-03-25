@@ -2,45 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Table of books</title>
+    <title>Table of Checkouts</title>
     <style>
         table, th, td {
             border: 1px solid black;
             border-collapse: collapse;
         }
     </style>
-
-    <style>
-        .context-menu {
-            position: absolute;
-            z-index: 1000;
-            width: 120px;
-            background-color: #fff;
-            border: 1px solid #888;
-            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
-            padding: 4px 0;
-            list-style: none;
-        }
-
-        .context-menu li {
-            padding: 4px 12px;
-            cursor: pointer;
-        }
-
-        .context-menu li:hover {
-            background-color: #ddd;
-        }
-
-        .context-menu li.disabled {
-            opacity: 0.5;
-            cursor: default;
-        }
-    </style>
-
-
 </head>
 <body>
-<h1>Table of books</h1>
+<h1>Table of Checkouts</h1>
 <div>
     <label for="paginationCheckbox">Paginate the table:</label>
     <input type="checkbox" id="paginationCheckbox" onchange="display_table()" />
@@ -68,16 +39,15 @@
 <table id="booksTable">
     <thead>
     <tr>
-        <th onclick="sort('author')">author</th>
-        <th onclick="sort('title')">title</th>
-        <th onclick="sort('year')">time of publication</th>
-        <th onclick="sort('status')">status</th>
-        <th onclick="sort('dueDate')">due date</th>
         <th onclick="sort('id')">ID</th>
-        <th onclick="sort('added')">added</th>
-        <th onclick="sort('checkOutCount')">check Out Count</th>
-        <th onclick="sort('genre')">genre</th>
-        <th onclick="sort('comment')">comment</th>
+        <th onclick="sort('borrowerFirstName')">borrowerFirstName</th><!--id,borrowerFirstName,borrowerLastName,borrowedBook,checkOutCount,status,dueDate,checkedOutDate,returnedDate   -->
+        <th onclick="sort('borrowerLastName')">borrowerLastName</th>
+        <th onclick="sort('borrowedBook')">borrowedBook</th>
+        <th onclick="sort('checkOutCount')">checkOutCount</th>
+        <th onclick="sort('status')">status</th>
+        <th onclick="sort('dueDate')">dueDate</th>
+        <th onclick="sort('checkedOutDate')">checkedOutDate</th>
+        <th onclick="sort('returnedDate')">returnedDate</th>
     </tr>
     </thead>
     <tbody>
@@ -86,13 +56,13 @@
 
 <script>
     // Define the URL to fetch JSON data from
-    const url = "http://localhost:8080/api/book/getBooks";
+    const url = "http://localhost:8080/api/checkout/getCheckouts";
 
     // Use the fetch function to download the JSON data
     fetch(url)
         .then(response => response.json())
         .then(data => {
-            list_of_books=data;
+            list_of_checkouts=data;
             // Get a reference to the table body element
             display_table()
 
@@ -135,11 +105,11 @@
         let showBorrowed = document.querySelector('#borrowedCheckbox').checked;
         let showAvailable = document.querySelector('#availableCheckbox').checked;
 
-        max_i= last_book<list_of_books.length ? last_book:list_of_books.length;
+        max_i= last_book<list_of_checkouts.length ? last_book:list_of_checkouts.length;
 
         // Loop through the JSON data and create table rows
         for (let i = first_book; i <max_i; i++) {
-            book=list_of_books[i]
+            book=list_of_checkouts[i]
             if (!showAvailable&&book.status==="AVAILABLE"){
                 continue}
             if (!showBorrowed&&book.status==="BORROWED"){
@@ -163,11 +133,15 @@
             const genreCell = row.insertCell();
             const commentCell = row.insertCell();
 
+            const checkoutCell = row.insertCell();
+            checkoutCell.innerHTML = `<button onclick="checkout_book(${book.id})">checkout</button>`;
+
+            const updatetCell = row.insertCell();
+            updatetCell.innerHTML = `<button onclick="update_book(${book.id})">update</button>`;
+
             const editDeleteCell = row.insertCell();
             editDeleteCell.innerHTML = `<button onclick="delete_book(${book.id})">Delete</button>`;
 
-            const CheckoutCell = row.insertCell();
-            CheckoutCell.innerHTML = `<button onclick="checkout_book(${book.id})">checkout</button>`;
 
             authorCell.innerText = book.author;
             titleCell.innerText = book.title;
@@ -208,7 +182,7 @@
         console.log(sort_order);
 
         // Sort the list of books using the sorting order
-        list_of_books.sort((a, b) => {
+        list_of_checkouts.sort((a, b) => {
             for (let i = sorting_order.length - 1; i >= 0; i--) {
                 const key = sorting_order[i];
                 const order = sort_order[sorting_order[i]];
