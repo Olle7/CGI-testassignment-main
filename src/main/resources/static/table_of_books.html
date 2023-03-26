@@ -51,7 +51,9 @@
 </table>
 
 <script>
-    // Define the URL to fetch JSON data from
+
+
+// Define the URL to fetch JSON data from
     const url = "http://localhost:8080/api/book/getBooks";
 
     const tabelHeaders = [{nr:2,name:'author'}, {nr:1,name:'title'}, {nr:4,name:'time of publication'}, {nr:7,name:'status'}, {nr:8,name:'dueDate'}, {nr:0,name:'id'}, {nr:5,name:'added'}, {nr:6,name:'checkOutCount'}, {nr:3,name:'genre'}, {nr:9,name:'comment'}];
@@ -96,8 +98,9 @@
         let matchesSearchQuery = false;
         if (searchQuery !== '') {
             for (let j = 0; j < tabelHeaders.length; j++) {
-                const fieldValue = book[tabelHeaders[j]];
-                if (typeof fieldValue === 'string' && fieldValue.toLowerCase().includes(searchQuery)) {
+                const fieldValue = Object.values(book)[tabelHeaders[j]["nr"]];
+                if (typeof fieldValue==='string'&&fieldValue.toLowerCase().includes(searchQuery)||(typeof fieldValue==='number'&&fieldValue.toString().toLowerCase().includes(searchQuery)))
+                {
                     matchesSearchQuery = true;
                     break;
                 }
@@ -229,7 +232,7 @@
 
 
     async function deleteBook(id) {
-        const response = await fetch(`/books/${id}`, {
+        const response = await fetch(`api/book/${id}`, {
             method: 'DELETE',
         });
 
@@ -238,12 +241,19 @@
         }
     }
 
-    async function delete_book(book_id) {
-        await deleteBook(book_id);
-
-        const row_index = find_row_index(book_id);
-        document.getElementById("booksTable").deleteRow(row_index);
-    }
+    function delete_book(bookId) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('DELETE', `http://localhost:8080/api/book/deleteBook?bookId=${bookId}`);
+        xhr.onload = () => {
+            if (xhr.status === 200) {
+                console.log(`Book with ID ${bookId} deleted.`);
+                display_table();
+            } else {
+                console.error(`Request failed. Status code: ${xhr.status}`);
+            }
+        };
+        xhr.send();
+}
 
 </script>
 

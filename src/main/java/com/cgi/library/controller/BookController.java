@@ -38,6 +38,7 @@ public class BookController {
 
     @DeleteMapping(value = "deleteBook")
     public ResponseEntity<String> deleteBook(@RequestParam(value = "bookId") UUID bookId) {
+        System.out.println("DELETE RECIEVED");
         bookService.deleteBook(bookId);
         return ResponseEntity.ok("");
     }
