@@ -235,7 +235,6 @@
         const response = await fetch(`api/book/${id}`, {
             method: 'DELETE',
         });
-
         if (!response.ok) {
             throw new Error('Failed to delete book');
         }
@@ -246,14 +245,13 @@
         xhr.open('DELETE', `http://localhost:8080/api/book/deleteBook?bookId=${bookId}`);
         xhr.onload = () => {
             if (xhr.status === 200) {
-                console.log(`Book with ID ${bookId} deleted.`);
-                display_table();
+                load_data();
             } else {
                 console.error(`Request failed. Status code: ${xhr.status}`);
             }
         };
         xhr.send();
-}
+    }
 
 </script>
 
