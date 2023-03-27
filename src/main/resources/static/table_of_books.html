@@ -39,7 +39,7 @@
 
 <div style="text-align: right;">
     <button onclick="load_data()">Reload Data</button>
-    <button>Add new book</button>
+    <button onclick="addBookRow()">Add new book</button>
 </div>
 
 <table id="booksTable">
@@ -154,7 +154,7 @@
             DeleteCell.innerHTML = `<button onclick="delete_book('${book.id}')">Delete</button>`;
 
             const updateCell = row.insertCell();
-            updateCell.innerHTML = `<button onclick="update_book('${book.id}')">update</button>`;
+            updateCell.innerHTML = `<button onclick="editBook('${book.id}', this.parentNode.parentNode)">Edit</button>`;
 
             authorCell.innerText = book.author;
             titleCell.innerText = book.title;
@@ -252,7 +252,52 @@
         };
         xhr.send();
     }
+function addBookRow() {
+    const tableBody = document.querySelector('#booksTable tbody');
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td><button onclick="saveBook(this)">Save</button></td>
+        <td><button onclick="deleteBook(this)">Delete</button></td>
+    `;
+    tableBody.appendChild(newRow);
+    console.log("addbook")
+}
 
+function editBook(bookId, updateButton) {
+  const row = updateButton.closest('tr');
+  const authorCell = row.cells[0];
+  const titleCell = row.cells[1];
+  const pubDateCell = row.cells[2];
+  const statusCell = row.cells[3];
+  const dueDateCell = row.cells[4];
+  const idCell = row.cells[5];
+  const addedCell = row.cells[6];
+  const checkOutCountCell = row.cells[7];
+  const genreCell = row.cells[8];
+  const commentCell = row.cells[9];
+
+  const updatedBook = {
+    id: bookId,
+    author: authorCell.textContent,
+    title: titleCell.textContent,
+    pubDate: pubDateCell.textContent,
+    status: statusCell.textContent,
+    dueDate: dueDateCell.textContent,
+    added: addedCell.textContent,
+    checkOutCount: checkOutCountCell.textContent,
+    genre: genreCell.textContent,
+    comment: commentCell.textContent
+  };
+
+  // make an HTTP PUT request to update the book in the backend with the new data
+  // then update the book in the frontend by replacing the old book with the updated book
+  // and update the corresponding row in the table with the new data
+}
 </script>
 
 </body>

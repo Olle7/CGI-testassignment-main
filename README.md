@@ -72,3 +72,24 @@ Reader should not be able to add / modify / delete existing book information or 
 but should be able to save favorites and check out / return books (that they have checked out)
 * Containerize your application to make it cloud-native
 
+
+This solution to test-assigment uses package gson. To compile the project you have to install this package.
+
+Add the following dependency to your build.gradle (or equivalent) file:
+"dependencies { implementation 'com.google.code.gson:gson:2.8.9' }"
+
+Import the Gson package in your Java class:
+"import com.google.gson.Gson;"
+
+    Use the Gson object to serialize/deserialize JSON data:
+
+scss
+
+// Serialize an object to JSON
+Gson gson = new Gson();
+String json = gson.toJson(myObject);
+
+// Deserialize JSON to an object
+MyObject myObject = gson.fromJson(json, MyObject.class);
+
+Make sure to replace MyObject with the name of your Java class.
